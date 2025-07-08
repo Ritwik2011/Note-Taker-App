@@ -79,3 +79,20 @@ body {
   background: linear-gradient(90deg, #5563d9, #5a3fa0);
   transform: translateY(-3px);
 }
+
+#reset-btn {
+  background: transparent;
+  margin-top: 10px;
+  color: #ddd;
+  font-weight: 600;
+  font-size: 1em;
+  text-decoration: underline;
+  cursor: pointer;
+  box-shadow: none;
+  padding: 0;
+  border: none;
+}
+
+#reset-btn:hover {
+  color: white;
+}
