@@ -42,6 +42,8 @@ const message = document.getElementById("message");
 
 let currentUser = null;
 let currentNoteId = null;
+let creatingNote = false;
+let saveTimeout = null;
 
 function showMessage(text, duration = 3000) {
   message.textContent = text;
@@ -132,8 +134,7 @@ async function saveNote() {
       showMessage("Note created");
       loadNotesList();
     }
-  } catch (error) {
-    console.error("Error saving note:", error);
+  } catch {
     showMessage("Error saving note");
   }
 }
@@ -169,48 +170,60 @@ logoutBtn.addEventListener("click", async () => {
   window.location.href = "index.html";
 });
 
-noteTitle.addEventListener("input", async () => {
+noteTitle.addEventListener("input", () => {
   if (!currentUser) return;
-  if (!currentNoteId) {
-    const notesRef = collection(db, "users", currentUser.uid, "notes");
-    const docRef = await addDoc(notesRef, {
-      title: noteTitle.value.trim() || "Untitled",
-      content: noteInput.value.trim() || "",
-      createdAt: new Date(),
-    });
-    currentNoteId = docRef.id;
-    loadNotesList();
-    saveBtn.disabled = false;
-    deleteBtn.disabled = false;
-  } else {
-    const noteRef = doc(db, "users", currentUser.uid, "notes", currentNoteId);
-    await updateDoc(noteRef, {
-      title: noteTitle.value.trim(),
-      updatedAt: new Date(),
-    });
-  }
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    if (!currentNoteId) {
+      if (creatingNote) return;
+      creatingNote = true;
+      const notesRef = collection(db, "users", currentUser.uid, "notes");
+      const docRef = await addDoc(notesRef, {
+        title: noteTitle.value.trim() || "Untitled",
+        content: noteInput.value.trim() || "",
+        createdAt: new Date(),
+      });
+      currentNoteId = docRef.id;
+      creatingNote = false;
+      loadNotesList();
+      saveBtn.disabled = false;
+      deleteBtn.disabled = false;
+    } else {
+      const noteRef = doc(db, "users", currentUser.uid, "notes", currentNoteId);
+      await updateDoc(noteRef, {
+        title: noteTitle.value.trim(),
+        updatedAt: new Date(),
+      });
+    }
+  }, 500);
 });
 
-noteInput.addEventListener("input", async () => {
+noteInput.addEventListener("input", () => {
   if (!currentUser) return;
-  if (!currentNoteId) {
-    const notesRef = collection(db, "users", currentUser.uid, "notes");
-    const docRef = await addDoc(notesRef, {
-      title: noteTitle.value.trim() || "Untitled",
-      content: noteInput.value.trim() || "",
-      createdAt: new Date(),
-    });
-    currentNoteId = docRef.id;
-    loadNotesList();
-    saveBtn.disabled = false;
-    deleteBtn.disabled = false;
-  } else {
-    const noteRef = doc(db, "users", currentUser.uid, "notes", currentNoteId);
-    await updateDoc(noteRef, {
-      content: noteInput.value.trim(),
-      updatedAt: new Date(),
-    });
-  }
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    if (!currentNoteId) {
+      if (creatingNote) return;
+      creatingNote = true;
+      const notesRef = collection(db, "users", currentUser.uid, "notes");
+      const docRef = await addDoc(notesRef, {
+        title: noteTitle.value.trim() || "Untitled",
+        content: noteInput.value.trim() || "",
+        createdAt: new Date(),
+      });
+      currentNoteId = docRef.id;
+      creatingNote = false;
+      loadNotesList();
+      saveBtn.disabled = false;
+      deleteBtn.disabled = false;
+    } else {
+      const noteRef = doc(db, "users", currentUser.uid, "notes", currentNoteId);
+      await updateDoc(noteRef, {
+        content: noteInput.value.trim(),
+        updatedAt: new Date(),
+      });
+    }
+  }, 500);
 });
 
 onAuthStateChanged(auth, (user) => {
