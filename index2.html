@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Online Note Taker</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="sidebar">
+      <h2>Your Notes</h2>
+      <button id="new-note-btn">+ New Note</button>
+      <ul id="notes-list"></ul>
+    </div>
+    <div id="editor">
+      <input type="text" id="note-title" placeholder="Note Title" />
+      <textarea id="note-input" placeholder="Write your note here..."></textarea>
+      <div class="buttons">
+        <button id="save-btn" disabled>Save</button>
+        <button id="delete-btn" disabled>Delete</button>
+        <button id="logout-btn">Logout</button>
+      </div>
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <script type="module" src="script2.js"></script>
+</body>
+</html>
